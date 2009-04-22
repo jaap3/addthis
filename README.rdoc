@@ -1,6 +1,43 @@
-= addthis
+= AddThis
 
-Description goes here.
+Simple helper plugin to add AddThis buttons to your application. It makes three
+new methods available for use in your views.
+
+addthis_bookmark_button
+addthis_email_button
+addthis_feed_button
+
+= Usage
+
+Common use cases:
+
+Without arguments:
+addthis_bookmark_button
+addthis_email_button
+AddThis will try to figure out the url and title by itself. This is not
+possible for addthis_feed_button.
+
+Custom url:
+addthis_bookmark_button("http://www.example.com/")
+addthis_email_button("http://www.example.com/")
+addthis_feed_button("http://www.example.com/")
+
+Custom url and title:
+addthis_bookmark_button("http://www.example.com/", "Example website")
+addthis_email_button("http://www.example.com/", "Example website")
+
+Custom title only:
+addthis_bookmark_button(:title => "Example title")
+addthis_email_button(:title => "Example title")
+
+If you wish to track analytics for your button, you must create an account at
+http://addthis.com/. Joining is free!
+
+= TODO
+
+Enable configurable publisher id.
+Allow more customisation.
+Support optional HTTPS output.
 
 == Copyright
 
