@@ -3,8 +3,6 @@ include Jaap3::AddThisHelper::ClassMethods
 
 class AddthisTest < Test::Unit::TestCase
 
-  should "be configurable"
-
   should "provide addthis_bookmark_button" do
     assert respond_to?(:addthis_bookmark_button)
   end
@@ -73,21 +71,21 @@ class AddthisTest < Test::Unit::TestCase
     end
   end
 
-  context "without configuration" do
-    context "a bookmark / share tag" do
+  context "with publisher configured" do
+    setup do
+      Jaap3::AddThisHelper::CONFIG[:publisher] = "test_publisher"
     end
 
-    context "a feed tag" do
-    end
-  end
+    [:addthis_bookmark_button, :addthis_feed_button, :addthis_email_button].each do |m|
+      context "the output of #{m}" do
+        setup do
+          @output = method(m).call("http://example.com")
+        end
 
-  context "with configuration" do
-    context "a bookmark / share tag" do
-      should "output bookmark tag with tracking"
-    end
-
-    context "a feed tag" do
-      should "output feed tag with tracking"
+        should "set addthis_pub to test_publisher" do
+          assert_match 'var addthis_pub="test_publisher";', @output
+        end
+      end
     end
   end
 
