@@ -1,37 +1,68 @@
 = AddThis
 
-Simple helper plugin to add AddThis buttons to your application. It makes three
-new methods available for use in your views.
+AddThis.com provides widgets that make sharing, bookmarking and emailing pages,
+and subscribing to feeds easy for your visitors. It supports a broad range of
+social network sites and web applications.
 
-addthis_bookmark_button
-addthis_email_button
-addthis_feed_button
+This plugin makes it easy to add a plain or customized AddThis.com widget to
+your Rails application.
 
-= Usage
+= Installation
+
+As a Gem in environment.rb:
+
+config.gem 'jaap3-addthis', :source => 'http://gems.github.com', :lib => 'addthis'
+
+As a plugin:
+
+script/plugin install git://github.com/jaap3/addthis.git
+
+= Quick Start
 
 Common use cases:
 
 Without arguments:
-addthis_bookmark_button
-addthis_email_button
+
+  addthis_bookmark_button
+  addthis_email_button
+
 AddThis will try to figure out the url and title by itself. This is not
 possible for addthis_feed_button.
 
 Custom url:
-addthis_bookmark_button("http://www.example.com/")
-addthis_email_button("http://www.example.com/")
-addthis_feed_button("http://www.example.com/")
+
+  addthis_bookmark_button("http://www.example.com/")
+  addthis_email_button("http://www.example.com/")
+  addthis_feed_button("http://www.example.com/")
 
 Custom url and title:
-addthis_bookmark_button("http://www.example.com/", "Example website")
-addthis_email_button("http://www.example.com/", "Example website")
+
+  addthis_bookmark_button("http://www.example.com/", "Example website")
+  addthis_email_button("http://www.example.com/", "Example website")
 
 Custom title only:
-addthis_bookmark_button(:title => "Example title")
-addthis_email_button(:title => "Example title")
+
+  addthis_bookmark_button(:title => "Example title")
+  addthis_email_button(:title => "Example title")
+
+= Usage
 
 If you wish to track analytics for your button, you must create an account at
 http://addthis.com/. Joining is free!
+
+After you've joined create a new ruby file in config/initializers called
+addthis.rb.
+
+You can configure your publisher name (your AddThis.com username):
+
+Jaap3::AddThisHelper::CONFIG[:publisher] = "YOUR USERNAME HERE"
+
+You can then use this initializer to override any other settings you might like.
+
+== Contributing
+
+If you would like to contribute to the AddThis plugin, just fork the code
+and send me a pull request after you are done fiddling.
 
 = TODO
 
