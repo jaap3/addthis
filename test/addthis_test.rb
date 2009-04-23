@@ -1,5 +1,5 @@
 require 'test_helper'
-include Jaap3::AddThisHelper::ClassMethods
+include Jaap3::Addthis::Helper
 
 class AddthisTest < Test::Unit::TestCase
 
@@ -22,8 +22,11 @@ class AddthisTest < Test::Unit::TestCase
   [:addthis_bookmark_button, :addthis_feed_button, :addthis_email_button].each do |m|
     context "the output of #{m}" do
       setup do
-        @output_lines = method(m).call("http://example.com").split("\n")
+        @output = method(m).call("http://example.com")
+        @output_lines = @output.split("\n")
       end
+
+      should_set_script_src_to Jaap3::Addthis::DEFAULT_OPTIONS[:script_src]
 
       should "start with an html comment" do
         assert_equal "<!-- AddThis Button BEGIN -->", @output_lines.first
@@ -35,14 +38,12 @@ class AddthisTest < Test::Unit::TestCase
     end
   end
 
-  context "a bookmark/share tag created without params" do
-    setup do
-      @output = addthis_bookmark_button
-    end
+  context "a bookmark/share button" do
+    setup { @output = addthis_bookmark_button }
 
-    should "link to http://www.addthis.com/bookmark.php" do
-      assert_match '<a href="http://www.addthis.com/bookmark.php', @output
-    end
+    should_set_alt_to Jaap3::Addthis::BOOKMARK_BUTTON_DEFAULTS[:alt]
+    should_set_title_to Jaap3::Addthis::BOOKMARK_BUTTON_DEFAULTS[:title]
+    should_set_href_to "http://www.addthis.com/bookmark.php?v=20"
 
     should "set url to [URL]" do
       assert_match "'[URL]'", @output
@@ -53,42 +54,97 @@ class AddthisTest < Test::Unit::TestCase
     end
   end
 
-  context "a feed tag" do
-    setup do
-      @output = addthis_feed_button("http://example.com")
-    end
+  context "a feed button" do
+    setup { @output = addthis_feed_button("http://example.com") }
 
-    should "link to http://www.addthis.com/feed.php" do
-      assert_match '<a href="http://www.addthis.com/feed.php', @output
-    end
-
-    should "set h1 param to example.com" do
-      assert_match "&h1=http://example.com", @output
-    end
+    should_set_alt_to Jaap3::Addthis::FEED_BUTTON_DEFAULTS[:alt]
+    should_set_title_to Jaap3::Addthis::FEED_BUTTON_DEFAULTS[:title]
+    should_set_href_to "http://www.addthis.com/feed.php?pub=&h1=http://example.com&t1="
 
     should "set url to example.com" do
       assert_match "'http://example.com')", @output
     end
   end
 
+  context "an email button" do
+    setup { @output = addthis_email_button }
+
+    should_set_alt_to Jaap3::Addthis::EMAIL_BUTTON_DEFAULTS[:alt]
+    should_set_title_to Jaap3::Addthis::EMAIL_BUTTON_DEFAULTS[:title]
+    should_set_href_to "http://www.addthis.com/bookmark.php"
+  end
+
   context "with publisher configured" do
-    setup do
-      Jaap3::AddThisHelper::CONFIG[:publisher] = "test_publisher"
-    end
+    setup { Jaap3::Addthis::CONFIG[:publisher] = "test_publisher" }
 
     [:addthis_bookmark_button, :addthis_feed_button, :addthis_email_button].each do |m|
       context "the output of #{m}" do
-        setup do
-          @output = method(m).call("http://example.com")
-        end
+        setup { @output = method(m).call("http://example.com") }
 
         should "set addthis_pub to test_publisher" do
           assert_match 'var addthis_pub="test_publisher";', @output
         end
       end
     end
+
+    context "a feed button" do
+      setup { @output = addthis_feed_button("http://example.com") }
+
+      should_set_href_to "http://www.addthis.com/feed.php?pub=test_publisher&h1=http://example.com&t1="
+    end
   end
 
-  should "use secure links"
+  context "with altered script_src" do
+    setup { Jaap3::Addthis::DEFAULT_OPTIONS[:script_src] = "http://example.com/example.js" }
+
+    [:addthis_bookmark_button, :addthis_feed_button, :addthis_email_button].each do |m|
+      context "the output of #{m}" do
+        setup do
+          @output = method(m).call("http://example.com")
+          @output_lines = @output.split("\n")
+        end
+
+        should_set_script_src_to "http://example.com/example.js"
+      end
+    end
+
+    context "in turn overwritten by options hash" do
+      [:addthis_bookmark_button, :addthis_feed_button, :addthis_email_button].each do |m|
+        context "the output of #{m}" do
+          setup do
+            @output = method(m).call("http://example.com", :script_src => "http://www.example.com/example.js")
+            @output_lines = @output.split("\n")
+          end
+
+          should_set_script_src_to "http://www.example.com/example.js"
+        end
+      end
+    end
+  end
+
+  context "when setting secure to true" do
+    [:addthis_bookmark_button, :addthis_feed_button, :addthis_email_button].each do |m|
+      context "by using the options hash the output of #{m}" do
+        setup do
+          @output = method(m).call("http://example.com", :secure => true)
+          @output_lines = @output.split("\n")
+        end
+
+        should_set_script_src_to "https://secure.addthis.com/js/200/addthis_widget.js"
+      end
+    end
+
+    [:addthis_bookmark_button, :addthis_feed_button, :addthis_email_button].each do |m|
+      context "by altering the defaults the output of #{m}" do
+        setup do
+          Jaap3::Addthis::DEFAULT_OPTIONS[:secure] = true
+          @output = method(m).call("http://example.com")
+          @output_lines = @output.split("\n")
+        end
+
+        should_set_script_src_to "https://secure.addthis.com/js/200/addthis_widget.js"
+      end
+    end
+  end
 
 end
