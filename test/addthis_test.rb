@@ -18,7 +18,15 @@ class AddthisTest < Test::Unit::TestCase
   should "provide addthis_email_button" do
     assert respond_to?(:addthis_email_button)
   end
-  
+
+  should "escape URL when used as a query param"
+
+  should "escape URL when used in a javascript string"
+
+  should "escape page_title when used as a query param"
+
+  should "escape page_title when used in a javascript string"
+
   [:addthis_bookmark_button, :addthis_feed_button, :addthis_email_button].each do |m|
     context "the output of #{m}" do
       setup do
@@ -212,9 +220,7 @@ class AddthisTest < Test::Unit::TestCase
     }
     [:addthis_bookmark_button, :addthis_feed_button, :addthis_email_button].each do |m|
       context "the output of #{m}" do
-        setup do
-          @output = method(m).call("http://example.com", options)
-        end
+        setup { @output = method(m).call("http://example.com", options) }
 
         options.each_pair do |attribute, value|
           should_customize attribute, value
@@ -240,9 +246,7 @@ class AddthisTest < Test::Unit::TestCase
 
   context "with a custom list of services" do
     context "the output of addthis_bookmark_button" do
-      setup do
-        @output = addthis_bookmark_button(:options => "facebook, email, twitter, more")
-      end
+      setup { @output = addthis_bookmark_button(:options => "facebook, email, twitter, more") }
 
       should_customize :options, "facebook, email, twitter, more"
     end
@@ -255,6 +259,12 @@ class AddthisTest < Test::Unit::TestCase
 
       should_customize :options, "facebook, email, twitter, more"
     end
+  end
+
+  context "with a custom language set" do
+    setup { @output = addthis_bookmark_button(:language => "nl") }
+    
+    should_customize :language, "nl"
   end
 
 end

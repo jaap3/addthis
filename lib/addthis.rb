@@ -8,7 +8,7 @@ module Jaap3
       :secure => false,
       :brand => nil, :header_color => nil, :header_background => nil,
       :offset_top => nil, :offset_left => nil, :hover_delay => nil,
-      :options => nil
+      :options => nil, :language => nil
     }
     BOOKMARK_BUTTON_DEFAULTS = {
       :title => "",
@@ -78,7 +78,7 @@ module Jaap3
       def addthis_custom_script(options = {})
         s = %Q{<script type="text/javascript">
           var addthis_pub = "#{options[:publisher]}";}
-        [:brand, :header_color, :header_background, :offset_top, :offset_left, :hover_delay, :options].each do |custom|
+        [:brand, :header_color, :header_background, :offset_top, :offset_left, :hover_delay, :options, :language].each do |custom|
           s << %Q{var addthis_#{custom} = #{options[custom].is_a?(Integer) ? options[custom] : %Q("#{options[custom]}")};} unless options[custom].nil?
         end
         s << "</script>"
