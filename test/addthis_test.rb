@@ -19,14 +19,6 @@ class AddthisTest < Test::Unit::TestCase
     assert respond_to?(:addthis_email_button)
   end
 
-  should "escape URL when used as a query param"
-
-  should "escape URL when used in a javascript string"
-
-  should "escape page_title when used as a query param"
-
-  should "escape page_title when used in a javascript string"
-
   [:addthis_bookmark_button, :addthis_feed_button, :addthis_email_button].each do |m|
     context "the output of #{m}" do
       setup do
@@ -51,10 +43,19 @@ class AddthisTest < Test::Unit::TestCase
     end
   end
 
+  [:addthis_bookmark_button, :addthis_email_button].each do |m|
+    context "the output of #{m} with url and title set" do
+      setup { @output = method(m).call("http://example.com", "It's an \"example\"") }
+
+      should "include title" do
+        assert_match "'It\\u0027s an \\u0022example\\u0022'", @output
+      end
+    end
+  end
+
   context "a bookmark/share button" do
     setup { @output = addthis_bookmark_button }
 
-    should_set_alt_to Jaap3::Addthis::BOOKMARK_BUTTON_DEFAULTS[:alt]
     should_set_title_to Jaap3::Addthis::BOOKMARK_BUTTON_DEFAULTS[:title]
     should_set_href_to "http://www.addthis.com/bookmark.php?v=20"
 
@@ -70,9 +71,8 @@ class AddthisTest < Test::Unit::TestCase
   context "a feed button" do
     setup { @output = addthis_feed_button("http://example.com") }
 
-    should_set_alt_to Jaap3::Addthis::FEED_BUTTON_DEFAULTS[:alt]
     should_set_title_to Jaap3::Addthis::FEED_BUTTON_DEFAULTS[:title]
-    should_set_href_to "http://www.addthis.com/feed.php?pub=&h1=http://example.com&t1="
+    should_set_href_to "http://www.addthis.com/feed.php?pub=&h1=http%3a%2f%2fexample.com&t1="
 
     should "set url to example.com" do
       assert_match "'http://example.com')", @output
@@ -82,7 +82,6 @@ class AddthisTest < Test::Unit::TestCase
   context "an email button" do
     setup { @output = addthis_email_button }
 
-    should_set_alt_to Jaap3::Addthis::EMAIL_BUTTON_DEFAULTS[:alt]
     should_set_title_to Jaap3::Addthis::EMAIL_BUTTON_DEFAULTS[:title]
     should_set_href_to "http://www.addthis.com/bookmark.php"
   end
@@ -101,7 +100,7 @@ class AddthisTest < Test::Unit::TestCase
     context "a feed button" do
       setup { @output = addthis_feed_button("http://example.com") }
 
-      should_set_href_to "http://www.addthis.com/feed.php?pub=test_publisher&h1=http://example.com&t1="
+      should_set_href_to "http://www.addthis.com/feed.php?pub=test_publisher&h1=http%3a%2f%2fexample.com&t1="
     end
 
     context "in turn overwritten by options hash" do
@@ -116,7 +115,7 @@ class AddthisTest < Test::Unit::TestCase
       context "a feed button" do
         setup { @output = addthis_feed_button("http://example.com", :publisher => "another_publisher") }
 
-        should_set_href_to "http://www.addthis.com/feed.php?pub=another_publisher&h1=http://example.com&t1="
+        should_set_href_to "http://www.addthis.com/feed.php?pub=another_publisher&h1=http%3a%2f%2fexample.com&t1="
       end
     end
   end
@@ -143,13 +142,12 @@ class AddthisTest < Test::Unit::TestCase
     end
   end
 
-  context "when overwriting alt and title" do
+  context "when overwriting title" do
     [:addthis_bookmark_button, :addthis_feed_button, :addthis_email_button].each do |m|
       context "the output of #{m}" do
-        setup { @output = method(m).call("http://example.com", :alt => "Example", :title => "Example title") }
+        setup { @output = method(m).call("http://example.com", :title => "Example title") }
 
         should_set_title_to "Example title"
-        should_set_alt_to "Example"
       end
     end
   end
