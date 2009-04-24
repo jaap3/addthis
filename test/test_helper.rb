@@ -26,6 +26,18 @@ class Test::Unit::TestCase
         should_set_src_to expected
       end
     end
+
+    def should_not_customize(attribute)
+      should "not set addthis_#{attribute}" do
+        assert_no_match(/var addthis_#{attribute} = "[\"]+";/, @output)
+      end
+    end
+
+    def should_customize(attribute, value)
+      should "set addthis_#{attribute} to '#{value}" do
+        assert_match(/var addthis_#{attribute} = ["]?#{value}["]?;/, @output)
+      end
+    end
   end
 
 end
