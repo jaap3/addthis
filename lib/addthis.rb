@@ -7,25 +7,26 @@ module Jaap3
       :script_src => "http://s7.addthis.com/js/200/addthis_widget.js",
       :secure => false,
       :brand => nil, :header_color => nil, :header_background => nil,
-      :offset_top => nil, :offset_left => nil, :hover_delay => nil
+      :offset_top => nil, :offset_left => nil, :hover_delay => nil,
+      :options => nil
     }
     BOOKMARK_BUTTON_DEFAULTS = {
       :title => "",
       :alt => "Bookmark and Share",
-      :button_html => '<img src="http://s7.addthis.com/static/btn/lg-share-en.gif"
-        width="125" height="16" border="0" alt="#{options[:alt]}" />'
+      :button_html => %q{<img src="http://s7.addthis.com/static/btn/lg-share-en.gif"
+        width="125" height="16" border="0" alt="#{options[:alt]}" />}
     }
     FEED_BUTTON_DEFAULTS = {
       :title => "Subscribe using any feed reader!",
       :alt => "Subscribe",
-      :button_html => '<img src="http://s7.addthis.com/static/btn/lg-feed-en.gif"
-        width="125" height="16" border="0" alt="#{options[:alt]}" />'
+      :button_html => %q{<img src="http://s7.addthis.com/static/btn/lg-feed-en.gif"
+        width="125" height="16" border="0" alt="#{options[:alt]}" />}
     }
     EMAIL_BUTTON_DEFAULTS = {
       :title => "",
       :alt => "Email",
-      :button_html => '<img src="http://s7.addthis.com/button1-email.gif"
-        width="54" height="16" border="0" alt="#{options[:alt]}" />'
+      :button_html => %q{<img src="http://s7.addthis.com/button1-email.gif"
+        width="54" height="16" border="0" alt="#{options[:alt]}" />}
     }
 
     module Helper
@@ -77,7 +78,7 @@ module Jaap3
       def addthis_custom_script(options = {})
         s = %Q{<script type="text/javascript">
           var addthis_pub = "#{options[:publisher]}";}
-        [:brand, :header_color, :header_background, :offset_top, :offset_left, :hover_delay].each do |custom|
+        [:brand, :header_color, :header_background, :offset_top, :offset_left, :hover_delay, :options].each do |custom|
           s << %Q{var addthis_#{custom} = #{options[custom].is_a?(Integer) ? options[custom] : %Q("#{options[custom]}")};} unless options[custom].nil?
         end
         s << "</script>"
@@ -91,8 +92,8 @@ module Jaap3
       def extract_addthis_options(args, options = {})
         page_title = args[0].is_a?(String) ? args.shift : options[:page_title]
         options = args[0].is_a?(Hash) ? args.shift : options
-        options[:page_title] = page_title
         options.symbolize_keys! if options.respond_to?(:symbolize_keys!)
+        options[:page_title] = page_title
         options = CONFIG.merge(DEFAULT_OPTIONS).merge(options)
         return options
       end

@@ -8,7 +8,7 @@ This plugin makes it easy to add plain or customized Addthis.com widgets to
 your Rails application. As a matter of fact, the code is framework agnostic
 and should be usable in other Ruby projects as well.
 
-= Installation
+== Installation
 
 If you want to use the Rails 2.1 dependency manager add this environment.rb:
 
@@ -23,7 +23,7 @@ Or use it as a plain plugin:
 
   script/plugin install git://github.com/jaap3/addthis.git
 
-= Quick Start
+== Quick Start
 
 The most basic use is simply providing no arguments:
 
@@ -52,7 +52,7 @@ To only set a custom title you can use to options hash:
 The options hash can be used to customize the widget to a great extent. Each of
 the shown examples can take the options hash as an optional extra argument.
 
-= Usage
+== Usage
 
 If you wish to track analytics for your button, you must create an account at
 http://Addthis.com. Joining is free!
@@ -79,24 +79,20 @@ Besides overriding the default settings using the initializer, each helper
 method takes an options hash that can be used to override any setting for
 a specific button.
 
-= Secure pages
+=== Services
 
-Calling one of the addthis_button methods with the secure option set to true
-like this:
+To change the initial list of services shown when opening the bookmark menu
+pass the options hash a list of services you wish to see.
 
-  addthis_bookmark_button(:publisher => "example", :secure => true)
+  addthis_bookmark_button(:options => "facebook, email, twitter, more")
 
-will output a button usable on https pages with the publisher variable set
-to "example" regardless of any configuration changes.
+For a list of available services see http://addthis.com/help/customize/services.
+You can avoid having to set your preferred set of services each call by
+modifying the default in your initializer.
 
-The default value of the secure option is false, this default can be changed by
-setting
+  Jaap3::Addthis::DEFAULT_OPTIONS[:options] = "facebook, email, twitter, more"
 
-  Jaap3::Addthis::DEFAULT_OPTIONS[:secure] = true
-
-in your initializer.
-
-= Custom images / text
+=== Custom images / text
 
 Using a different image or link text is achieved by using the methods with a
 block:
@@ -116,7 +112,7 @@ constants in you initializer:
   Jaap3::Addthis::FEED_BUTTON_DEFAULTS[:button_html] = "Click here to AddThis"
   Jaap3::Addthis::EMAIL_BUTTON_DEFAULTS[:button_html] = "Click here to AddThis"
 
-= Script options
+=== Script options
 
 Addthis.com allows for a few variables to be set to change the appearance of the
 widget. These can either be given during a method call:
@@ -138,7 +134,29 @@ Note that you cannot customize individual buttons on a page. Custom settings
 will be applied to all the buttons on a page. This is a limitation of the
 Addthis.com widget.
 
-= Contributing
+Read more about these options on the the addthis.com website:
+http://addthis.com/help/customize/branding
+http://addthis.com/help/customize/menu-offset
+http://addthis.com/help/customize/hover-delay
+
+=== Secure pages
+
+Calling one of the addthis_button methods with the secure option set to true
+like this:
+
+  addthis_bookmark_button(:publisher => "example", :secure => true)
+
+will output a button usable on https pages with the publisher variable set
+to "example" regardless of any configuration changes.
+
+The default value of the secure option is false, this default can be changed by
+setting
+
+  Jaap3::Addthis::DEFAULT_OPTIONS[:secure] = true
+
+in your initializer.
+
+== Contributing
 
 If you would like to contribute to the Addthis plugin, just fork the code
 and send me a pull request after you are done fiddling.

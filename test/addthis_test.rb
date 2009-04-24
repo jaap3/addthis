@@ -228,13 +228,32 @@ class AddthisTest < Test::Unit::TestCase
           options.each_pair do |attribute, value|
             Jaap3::Addthis::DEFAULT_OPTIONS[attribute] = value
           end
-          @output = method(m).call("http://example.com", options)
+          @output = method(m).call("http://example.com")
         end
 
         options.each_pair do |attribute, value|
           should_customize attribute, value
         end
       end
+    end
+  end
+
+  context "with a custom list of services" do
+    context "the output of addthis_bookmark_button" do
+      setup do
+        @output = addthis_bookmark_button(:options => "facebook, email, twitter, more")
+      end
+
+      should_customize :options, "facebook, email, twitter, more"
+    end
+
+    context "by changing the defaults the output of addthis_bookmark_button" do
+      setup do
+        Jaap3::Addthis::DEFAULT_OPTIONS[:options] = "facebook, email, twitter, more"
+        @output = addthis_bookmark_button
+      end
+
+      should_customize :options, "facebook, email, twitter, more"
     end
   end
 
