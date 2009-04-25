@@ -64,7 +64,7 @@ module Jaap3
       end
 
       def addthis_open(type, url, title = nil)
-        "addthis_open(this, '#{type}', '#{url}'#{ title.nil? ? "" : ", '#{title.gsub("'", "\\u0027").gsub("\"", "\\u0022")}'"})"
+        "return addthis_open(this, '#{type}', '#{url}'#{ title.nil? ? "" : ", '#{title.gsub("'", "\\u0027").gsub("\"", "\\u0022")}'"})"
       end
 
       def extract_addthis_url_and_options(args, options = {:page_title => "[TITLE]"})
