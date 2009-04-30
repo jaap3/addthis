@@ -9,6 +9,10 @@ module Jaap3
     }
     BOOKMARK_BUTTON_DEFAULTS = {
       :title => "",
+      :button_html => '<img src="http://s7.addthis.com/static/btn/lg-bookmark-en.gif" width="125" height="16" border="0" alt="Bookmark and Share" />'
+    }
+    SHARE_BUTTON_DEFAULTS = {
+      :title => "",
       :button_html => '<img src="http://s7.addthis.com/static/btn/lg-share-en.gif" width="125" height="16" border="0" alt="Bookmark and Share" />'
     }
     FEED_BUTTON_DEFAULTS = {
@@ -21,14 +25,17 @@ module Jaap3
     }
 
     module Helper
-      def addthis_bookmark_button(*args)
-        url, options = extract_addthis_url_and_options(args)
-        options[:button_html] = yield if block_given?
-        options = BOOKMARK_BUTTON_DEFAULTS.merge(options)
-        s = %Q{<a href="http://www.addthis.com/bookmark.php?v=20" onmouseover="#{addthis_open("", url, options[:page_title])}" onmouseout="addthis_close()" onclick="return addthis_sendto()" title="#{options[:title]}">}
-        addthis_tag(s, options)
+      %w(bookmark share).each do |func|
+        module_eval <<-EOS
+          def addthis_#{func}_button(*args)
+            url, options = extract_addthis_url_and_options(args)
+            options[:button_html] = yield if block_given?
+            options = Jaap3::Addthis::#{func.upcase}_BUTTON_DEFAULTS.merge(options)
+            s = %Q(<a href="http://www.addthis.com/bookmark.php?v=20" onmouseover="\#{addthis_open("", url, options[:page_title])}" onmouseout="addthis_close()" onclick="return addthis_sendto()" title="\#{options[:title]}">)
+            addthis_tag(s, options)
+          end
+        EOS
       end
-      alias addthis_share_button addthis_bookmark_button
 
       def addthis_email_button(*args)
         url, options = extract_addthis_url_and_options(args)
